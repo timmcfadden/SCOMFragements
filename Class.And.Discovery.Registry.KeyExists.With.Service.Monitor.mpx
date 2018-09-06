@@ -2,7 +2,7 @@
 <!-- 
 %%
 Description:
-Combo Fragment to Replace the Windows Service Template.  Fragment will discover if Windows Service Exists.  Then Monitor it with the ability to
+Combo Fragment To Replace the Windows Service Template.  Fragment will discover if Windows Service Exists.  Then Monitor it with the ability to
 Set Number of Samples and Inerval
 
 **ComboFragment Part 1**
