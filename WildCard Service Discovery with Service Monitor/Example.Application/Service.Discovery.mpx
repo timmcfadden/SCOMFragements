@@ -1,7 +1,7 @@
 ﻿<ManagementPackFragment SchemaVersion="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Monitoring>
     <Discoveries>
-      <Discovery ID="##CompanyID##.##AppName##.##ServiceName##.Discovery" Enabled="true" Target="Example.Application.OpalisActionServer" ConfirmDelivery="true" Remotable="true" Priority="Normal">
+      <Discovery ID="##CompanyID##.##AppName##.##ServiceName##.Discovery" Enabled="true" Target="##CompanyID##.##AppName##.Class" ConfirmDelivery="true" Remotable="true" Priority="Normal">
         <Category>Discovery</Category>
         <DiscoveryTypes>
           <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class">
