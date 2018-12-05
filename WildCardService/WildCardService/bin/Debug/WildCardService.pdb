@@ -1,0 +1,14 @@
+Class.And.Discovery.Registry.KeyExists.mpx*Nationwide.Printer.Class*28*10*ClassType
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.MonitorType*31*7*UnitMonitorType
+Class.And.Discovery.Registry.KeyExists.mpx*Nationwide.Printer.Class.Discovery*40*8*Discovery
+Service.Discovery.mpx*Nationwide.Printer.Spooler.Discovery*4*8*Discovery
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor*196*8*UnitMonitor
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor.Alert.Message*224*8*StringResource
+Class.And.Discovery.Registry.KeyExists.mpx*Nationwide.Printer.Class*88*10*DisplayString
+Class.And.Discovery.Registry.KeyExists.mpx*Nationwide.Printer.Class.Discovery*91*10*DisplayString
+Class.And.Discovery.Registry.KeyExists.mpx*Nationwide.Printer.Class*95*10*DisplayString*SubElementID*Spooler
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor*230*10*DisplayString
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor*233*10*DisplayString*SubElementID*Running
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor*236*10*DisplayString*SubElementID*NotRunning
+Monitor.Service.WithAlert.FreqAndSamples.mpx*Nationwide.Printer.Spooler.Service.Monitor.Alert.Message*239*10*DisplayString
+Service.Discovery.mpx*Nationwide.Printer.Spooler.Discovery*40*10*DisplayString

@@ -1,0 +1,46 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CompanyID##.##AppName##.##ServiceName##.Discovery" Enabled="true" Target="##CompanyID##.##AppName##.Class" ConfirmDelivery="true" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class">
+            <Property TypeID="##CompanyID##.##AppName##.Class" PropertyID="##ServiceName##" />
+          </DiscoveryClass>
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.Discovery.WMISinglePropertyProvider2">
+          <NameSpace>root\cimv2</NameSpace>
+
+          <!--TM - Need to Change ServiceName-->
+          <Query>Select Name from Win32_Service where Name like '##ServiceName##%'</Query>
+          <!--TM - Need to Change ServiceName-->
+
+          <Frequency>60</Frequency>
+          <ClassID>$MPElement[Name="##CompanyID##.##AppName##.Class"]$</ClassID>
+          <PropertyName>##ServiceName##</PropertyName>
+          <InstanceSettings>
+            <Settings>
+              <Setting>
+                <Name>$MPElement[Name="##CompanyID##.##AppName##.Class"]/##ServiceName##$</Name>
+                <Value>$Data/Property[@Name='Name']$</Value>
+              </Setting>
+              <Setting>
+                <Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+                <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+            </Settings>
+          </InstanceSettings>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Discovery">
+          <Name>##CompanyID## ##AppName## ##ServiceName## Service Name Discovery</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

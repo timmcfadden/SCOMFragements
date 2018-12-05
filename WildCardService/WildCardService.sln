@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D4B43EB3-688B-4EEE-86BD-088F0B28ABB3}") = "WildCardService", "WildCardService\WildCardService.mpproj", "{F38EA159-B89E-4F8A-82F3-B9030F6B3E68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F38EA159-B89E-4F8A-82F3-B9030F6B3E68}.Debug|x86.ActiveCfg = Debug|x86
+		{F38EA159-B89E-4F8A-82F3-B9030F6B3E68}.Debug|x86.Build.0 = Debug|x86
+		{F38EA159-B89E-4F8A-82F3-B9030F6B3E68}.Release|x86.ActiveCfg = Release|x86
+		{F38EA159-B89E-4F8A-82F3-B9030F6B3E68}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C5BDA63D-2F69-48EA-92B5-5F649C843125}
+	EndGlobalSection
+EndGlobal
