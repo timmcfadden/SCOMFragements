@@ -1,0 +1,284 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+
+Version: 1.0
+LastModified: 28-Apr-2021
+%%
+
+In this fragment you need to replace:
+##ClassID##
+
+This fragment depends on references:
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="6.1.7221.0"
+  RequiredReference: Alias="SystemHealth", ID="System.Health.Library", Version="6.1.7221.0"
+  RequiredReference: Alias="System", ID="System.Library", Version="6.1.7221.0"
+  RequiredReference: Alias="SystemPerf", ID="System.Performance.Library", Version="6.1.7221.0"
+  RequiredReference: Alias="IISCommon", ID="Microsoft.Windows.InternetInformationServices.CommonLibrary", Version="10.0.9.0"
+-->
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISStateDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="PeriodInSeconds" type="xsd:integer" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Type">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="WebSites" />
+                <xsd:enumeration value="FTPSites" />
+                <xsd:enumeration value="AppPools" />
+                <xsd:enumeration value="All" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISStateProbe.10">
+                <Type>$Config/Type$</Type>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISStateProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Type">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="WebSites" />
+                <xsd:enumeration value="FTPSites" />
+                <xsd:enumeration value="AppPools" />
+                <xsd:enumeration value="All" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+        </Configuration>
+        <ModuleImplementation Isolation="Any">
+          <Native>
+            <ClassID>29D0D61F-7540-4937-97D9-D991E3E79513</ClassID>
+          </Native>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="Microsoft.Windows.Server.IIS.IISApplicationPoolStateMonitor.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="Started" NoDetection="false" />
+          <MonitorTypeState ID="Stopped" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="PeriodInSeconds" type="xsd:integer" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="PoolID" type="xsd:string" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="MatchCount" type="xsd:integer" />		  
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="MatchCount" Selector="$Config/MatchCount$" ParameterType="int" />		  
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.IISStateDataSource.10">
+              <PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+              <Type>All</Type>
+            </DataSource>
+            <ConditionDetection ID="FilterStarted" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery>Property[@Name='$Config/PoolID$']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>Started</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="StartedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+              <ObjectName>Application Pool</ObjectName>
+              <CounterName>State</CounterName>
+              <InstanceName>$Config/PoolID$</InstanceName>
+              <Value>1</Value>
+            </ConditionDetection>
+            <ConditionDetection ID="StoppedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+              <ObjectName>Application Pool</ObjectName>
+              <CounterName>State</CounterName>
+              <InstanceName>$Config/PoolID$</InstanceName>
+              <Value>0</Value>
+            </ConditionDetection>
+            <ConditionDetection ID="FilterStopped" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery>Property[@Name='$Config/PoolID$']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>NotEqual</Operator>
+                  <ValueExpression>
+                    <Value>Started</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+			  <SuppressionSettings>
+			    <MatchCount>$Config/MatchCount$</MatchCount>
+			  </SuppressionSettings>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="Started">
+              <Node ID="StartedMapper">
+                <Node ID="FilterStarted">
+                  <Node ID="DS" />
+                </Node>
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="Stopped">
+              <Node ID="StoppedMapper">
+                <Node ID="FilterStopped">
+                  <Node ID="DS" />
+                </Node>
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="SystemHealth!System.Health.AvailabilityState" Remotable="false" Priority="Normal" TypeID="Microsoft.Windows.Server.IIS.IISApplicationPoolStateMonitor.10" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor.AlertMessage">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Error</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PoolID$</AlertParameter1>
+            <AlertParameter2>$Target/Host/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</AlertParameter2>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Started" MonitorTypeStateID="Started" HealthState="Success" />
+          <OperationalState ID="Stopped" MonitorTypeStateID="Stopped" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <PeriodInSeconds>60</PeriodInSeconds>
+          <PoolID>$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PoolID$</PoolID>
+		  <MatchCount>5</MatchCount>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor.AlertMessage" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor">
+          <Name>Application Pool availability</Name>
+          <Description>Application Pool availability</Description>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor" SubElementID="Started">
+          <Name>Started</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor" SubElementID="Stopped">
+          <Name>Stopped</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor.AlertMessage">
+          <Name>IIS 10 Application Pool is unavailable</Name>
+          <Description>The IIS 10 Application Pool named {0} on {1} is unavailable as the Application Pool has been stopped.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.Server.IIS.IISApplicationPoolStateMonitor.10">
+          <Name>IIS 10 Application Pool State Monitor Type</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.Server.IIS.IISApplicationPoolStateMonitor.10" SubElementID="PeriodInSeconds">
+          <Name>Interval(sec)</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.Server.IIS.IISStateDataSource.10">
+          <Name>IIS 10 Site State Data Source</Name>
+          <Description>This Data Source get the IIS 10 Sites State in Windows Server 2016 and 1709+</Description>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.Server.IIS.IISStateDataSource.10" SubElementID="PeriodInSeconds">
+          <Name>Interval(sec)</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.Server.IIS.IISStateProbe.10">
+          <Name>IIS 10 Site State Probe</Name>
+          <Description>This probe get IIS 10 Sites State in Windows Server 2016 and 1709+</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles>
+        <KnowledgeArticle ElementID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.ApplicationPoolStatusCheck.Monitor" Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>This monitor checks the status of the IIS Application Pool. If you receive an alert from this monitor, action is required in order to bring the Application Pool back to an operational state.</maml:para>
+              <maml:para />
+              <maml:para>Operational States:</maml:para>
+              <maml:para>An IIS Application Pool site can be either in a "Started" or "Stopped" operational state.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Configuration</maml:title>
+              <maml:para>The only configurable parameter of this monitor is the time interval used to check the status of the Application Pool.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Causes</maml:title>
+              <maml:para>An IIS Application Pool can stop for many reasons, including:</maml:para>
+              <maml:list>
+                <maml:listItem>
+                  <maml:para>The Application Pool was stopped by an administrator</maml:para>
+                </maml:listItem>
+                <maml:listItem>
+                  <maml:para>The Application Pool was improperly configured which caused it to fail or prevented it from starting.</maml:para>
+                </maml:listItem>
+              </maml:list>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Resolutions</maml:title>
+              <maml:para>If an IIS Application Pool is stopped you can diagnose the issue or restart the Application Pool by taking the following actions:</maml:para>
+              <maml:list>
+                <maml:listItem>
+                  <maml:para>Check for additional Application Pool related alerts that might have occurred concurrently. These alerts might help better identify the reason why the Application Pool is stopped.</maml:para>
+                </maml:listItem>
+                <maml:listItem>
+                  <maml:para>Review the event logs on the managed computer, and correct any underlying problems that might have caused the Application Pool to stop unexpectedly.</maml:para>
+                </maml:listItem>
+              </maml:list>
+              <maml:para />
+              <maml:para>
+                <maml:navigationLink>
+                  <maml:linkText>Start Application Pool</maml:linkText>
+                  <maml:uri condition="Task" href="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.StartApplicationPool.Task&amp;tasktarget={$TARGET$}" uri="MOM.Console.Exe" />
+                </maml:navigationLink>
+              </maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+      </KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
